@@ -1,3 +1,3 @@
 <template>
-    <h1>lists of users</h1>
+  <h1>lists of users</h1>
 </template>

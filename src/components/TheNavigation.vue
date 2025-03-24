@@ -1,11 +1,13 @@
 <template>
-    <div class="navigation">
-        <router-link id="home" to="/home">Home</router-link>
-        <router-link id="OrganizationShow" to="/organization">Organization</router-link>
-        <router-link id="Sensors" to="/home">Sensors</router-link>
-        <!-- <router-link id="Logout" to="/logout">Logout</router-link> -->
-        <a href="#" id="Logout" @click="handleLogout">Logout</a>
-    </div>
+  <div class="navigation">
+    <router-link id="home" to="/home">Home</router-link>
+    <router-link id="OrganizationShow" to="/organization"
+      >Organization</router-link
+    >
+    <router-link id="Sensors" to="/home">Sensors</router-link>
+    <!-- <router-link id="Logout" to="/logout">Logout</router-link> -->
+    <a href="#" id="Logout" @click="handleLogout">Logout</a>
+  </div>
 </template>
 
 <script setup>

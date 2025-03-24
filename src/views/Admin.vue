@@ -2,13 +2,14 @@
   <div class="admin-layout">
     <Sidebar class="sidebar" />
     <div class="content">
-      <router-view></router-view> <!-- Renders selected admin section -->
+      <router-view></router-view>
+      <!-- Renders selected admin section -->
     </div>
   </div>
 </template>
 
 <script setup>
-import Sidebar from "@/components/Sidebar.vue";
+import Sidebar from '@/components/Sidebar.vue';
 </script>
 
 <style scoped>

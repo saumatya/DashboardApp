@@ -1,20 +1,21 @@
 <template>
-    <div class="home">
-        <h1>Organizations </h1>
-        <div class="organizations">
-            <router-link 
-            v-for="organization in organizations"
-            :key="organization.id"
-            :to="{name: 'organization.show', params: {id: organization.id}, query: {name: organization.name}}"
-
-
-        >   
-            <h2>{{ organization.name }}</h2>
-            <img :src="`/images/${organization.image}`" :alt="organization.name" />
-            </router-link>
-        </div>
+  <div class="home">
+    <h1>Organizations</h1>
+    <div class="organizations">
+      <router-link
+        v-for="organization in organizations"
+        :key="organization.id"
+        :to="{
+          name: 'organization.show',
+          params: { id: organization.id },
+          query: { name: organization.name },
+        }"
+      >
+        <h2>{{ organization.name }}</h2>
+        <img :src="`/images/${organization.image}`" :alt="organization.name" />
+      </router-link>
     </div>
-
+  </div>
 </template>
 <script>
 // export default {
@@ -36,7 +37,6 @@
 //     }
 // }
 
-
 //FETCHING ORGANIZATIONS FROM BACKEND API
 
 import axios from 'axios';
@@ -50,69 +50,72 @@ export default {
     this.fetchOrganizations();
   },
   methods: {
-
     //with debugging
     async fetchOrganizations() {
-    try {
-        const token = localStorage.getItem("jwtToken");
+      try {
+        const token = localStorage.getItem('jwtToken');
         const apiUrl = import.meta.env.VITE_API_URL;
         const apiKey = import.meta.env.VITE_API_KEY;
 
         if (!token) {
-            console.error("JWT token is missing from localStorage");
-            return;
+          console.error('JWT token is missing from localStorage');
+          return;
         }
         if (!apiUrl) {
-            console.error("API URL is not defined");
-            return;
+          console.error('API URL is not defined');
+          return;
         }
         if (!apiKey) {
-            console.error("API Key is not defined");
-            return;
+          console.error('API Key is not defined');
+          return;
         }
 
         // Log the request details before sending
-        console.log("Making API Request...");
-        console.log("Endpoint:", `${apiUrl}/organisation/list`);
-        console.log("Method: GET");
-        console.log("Headers:", {
-            Authorization: `Bearer ${token}`,
-            "X-CoPower-API": apiKey,
-            "Content-Type": "application/json",
+        console.log('Making API Request...');
+        console.log('Endpoint:', `${apiUrl}/organisation/list`);
+        console.log('Method: GET');
+        console.log('Headers:', {
+          Authorization: `Bearer ${token}`,
+          'X-CoPower-API': apiKey,
+          'Content-Type': 'application/json',
         });
 
         const response = await axios.get(`${apiUrl}/organisation/list`, {
-            headers: {
-                // Authorization: `Bearer ${token}`,
-                "X-CoPower-API": apiKey,
-                "Content-Type": "application/json",
-            },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'X-CoPower-API': apiKey,
+            'Content-Type': 'application/json',
+          },
         });
 
-        console.log("Response Status:", response.status);
-        console.log("Response Headers:", response.headers);
-        console.log("Response Data:", JSON.stringify(response.data, null, 2));
+        console.log('Response Status:', response.status);
+        console.log('Response Headers:', response.headers);
+        console.log('Response Data:', JSON.stringify(response.data, null, 2));
 
         this.organizations = response.data.map((org) => ({
-            id: org.id,
-            name: org.name,
+          id: org.id,
+          name: org.name,
         }));
-
-    } catch (error) {
-        console.error("Error fetching organizations:", error);
+      } catch (error) {
+        console.error('Error fetching organizations:', error);
 
         if (error.response) {
-            console.error("Error Response Status:", error.response.status);
-            console.error("Error Response Headers:", error.response.headers);
-            console.error("Error Response Data:", JSON.stringify(error.response.data, null, 2));
+          console.error('Error Response Status:', error.response.status);
+          console.error('Error Response Headers:', error.response.headers);
+          console.error(
+            'Error Response Data:',
+            JSON.stringify(error.response.data, null, 2)
+          );
         } else if (error.request) {
-            console.error("No response received. Request details:", error.request);
+          console.error(
+            'No response received. Request details:',
+            error.request
+          );
         }
-    }
-}
+      }
+    },
 
-
-//original code
+    //original code
     // async fetchOrganizations() {
     //   try {
     //     const token = localStorage.getItem("jwtToken");
@@ -138,50 +141,47 @@ export default {
     //   }
     // },
 
-//     async fetchOrganizations() {
-//     try {
-//         const token = localStorage.getItem("jwtToken");
-//         const apiUrl = import.meta.env.VITE_API_URL;
-//         const apiKey = import.meta.env.VITE_API_KEY;
+    //     async fetchOrganizations() {
+    //     try {
+    //         const token = localStorage.getItem("jwtToken");
+    //         const apiUrl = import.meta.env.VITE_API_URL;
+    //         const apiKey = import.meta.env.VITE_API_KEY;
 
-//         console.log("API URL:", apiUrl);
-//         console.log("API Key:", apiKey);
-//         console.log("JWT Token:", token);
+    //         console.log("API URL:", apiUrl);
+    //         console.log("API Key:", apiKey);
+    //         console.log("JWT Token:", token);
 
-//         if (!token) {
-//             console.error("JWT token is missing from localStorage");
-//             return;
-//         }
-//         if (!apiUrl) {
-//             console.error("API URL is not defined");
-//             return;
-//         }
-//         if (!apiKey) {
-//             console.error("API Key is not defined");
-//             return;
-//         }
+    //         if (!token) {
+    //             console.error("JWT token is missing from localStorage");
+    //             return;
+    //         }
+    //         if (!apiUrl) {
+    //             console.error("API URL is not defined");
+    //             return;
+    //         }
+    //         if (!apiKey) {
+    //             console.error("API Key is not defined");
+    //             return;
+    //         }
 
-//         const response = await axios.get(`${apiUrl}/organisation/list`, {
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//                 "X-CoPower-API": apiKey,
-//             },
-//         });
+    //         const response = await axios.get(`${apiUrl}/organisation/list`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //                 "X-CoPower-API": apiKey,
+    //             },
+    //         });
 
-//         console.log("API Response:", response);
+    //         console.log("API Response:", response);
 
-//         this.organizations = response.data.map((org) => ({
-//             id: org.id,
-//             name: org.name,
-//             image: 'default-image.jpg',
-//         }));
-//     } catch (error) {
-//         console.error("Error fetching organizations:", error);
-//     }
-// }
-
-
-    
+    //         this.organizations = response.data.map((org) => ({
+    //             id: org.id,
+    //             name: org.name,
+    //             image: 'default-image.jpg',
+    //         }));
+    //     } catch (error) {
+    //         console.error("Error fetching organizations:", error);
+    //     }
+    // }
   },
 };
 </script>
