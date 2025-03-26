@@ -43,6 +43,9 @@ const handleLogin = async () => {
     return;
   }
   try {
+    //direct redirection REMOVE LATER
+    router.push('/home');
+    return;
     const response = await axios.post(
       API_URL,
       {
@@ -57,6 +60,7 @@ const handleLogin = async () => {
       }
     );
     console.log(response);
+
     if (response.status === 200) {
       console.log('Login successful');
       localStorage.setItem('jwtToken', response.data.token);
