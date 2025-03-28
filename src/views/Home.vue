@@ -100,8 +100,8 @@ data() {
         :key="sensor"
         v-if="showChart"
         :measurements="measurement"
-        :unit="'Celsius'"
-        :label="'Temperature'"
+        :unit="measurement.unit"
+        :label="measurement.name"
       />
 
       <!-- :unit="sensorUnits[sensor]"
@@ -113,7 +113,7 @@ data() {
       </div> -->
     <!-- <SensorChart :measurements="measurements"/> -->
     <div v-if="measurements.length > 0">
-      <table class="measurements-table">
+      <!-- <table class="measurements-table">
         <thead>
           <tr>
             <th>Date</th>
@@ -126,7 +126,7 @@ data() {
             <td>{{ measurement.value }}</td>
           </tr>
         </tbody>
-      </table>
+      </table> -->
     </div>
     <div v-else-if="dataFetched">
       No measurements available for the given period.
@@ -177,25 +177,26 @@ export default {
       sensorUnit: this.$route.state?.sensorUnit || 'Unit',
       dataFetched: false,
       loading: false,
-      measurements: [],
+      sensorNames: [],
+      sensorUnits: [],
       measurements: {
         sensor1: [],
         sensor2: [],
         sensor3: [],
         sensor4: [],
       },
-      sensorUnits: {
-        sensor1: '°C',
-        sensor2: 'Pa',
-        sensor3: 'm/s',
-        sensor4: 'ppm',
-      },
-      sensorLabels: {
-        temperature: 'Temperature',
-        humidity: 'WindSpeed',
-        pressure: 'Cloudiness',
-        power: 'Spot Electricity Prices',
-      },
+      // sensorUnits: {
+      //   sensor1: '°C',
+      //   sensor2: 'Pa',
+      //   sensor3: 'm/s',
+      //   sensor4: 'ppm',
+      // },
+      // sensorLabels: {
+      //   temperature: 'Temperature',
+      //   humidity: 'WindSpeed',
+      //   pressure: 'Cloudiness',
+      //   power: 'Spot Electricity Prices',
+      // },
 
       startTime: null,
       endTime: null,
@@ -290,8 +291,11 @@ export default {
       let startTime, endTime;
 
       if (range === 'day') {
-        startTime = new Date(now.setHours(0, 0, 0, 0)).toISOString(); // Start of today
-        endTime = new Date(now.setHours(23, 59, 59, 999)).toISOString(); // End of today
+        // startTime = new Date(now.setHours(0, 0, 0, 0)).toISOString(); // Start of today
+        // endTime = new Date(now.setHours(23, 59, 59, 999)).toISOString(); // End of today
+        //hardcoded
+        startTime = new Date('2024-10-01T00:00:00').toISOString(); // Start of October 1, 2024
+        endTime = new Date('2024-10-01T23:59:59.999').toISOString(); // End of October 1, 2024
       } else if (range === 'week') {
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay()); // Start of the week (Sunday)
@@ -394,64 +398,64 @@ export default {
     //   }
     // },
     // //new one for visualization
-    async fetchMeasurements(startTime, endTime) {
-      this.showChart = true;
-      this.loading = true;
+    // async fetchMeasurements(startTime, endTime) {
+    //   this.showChart = true;
+    //   this.loading = true;
 
-      console.log(
-        'Fetching from startTime:',
-        startTime,
-        'to endTime:',
-        endTime
-      );
-      ///// remove later
-      return;
-      ////
-      try {
-        const token = localStorage.getItem('jwtToken');
-        const apiUrl = import.meta.env.VITE_API_URL;
-        const apiKey = import.meta.env.VITE_API_KEY;
+    //   console.log(
+    //     'Fetching from startTime:',
+    //     startTime,
+    //     'to endTime:',
+    //     endTime
+    //   );
+    //   ///// remove later
+    //   return;
+    //   ////
+    //   try {
+    //     const token = localStorage.getItem('jwtToken');
+    //     const apiUrl = import.meta.env.VITE_API_URL;
+    //     const apiKey = import.meta.env.VITE_API_KEY;
 
-        if (!token) {
-          console.error('JWT token is missing from localStorage');
-          return;
-        }
-        if (!apiUrl) {
-          console.error('API URL is not defined');
-          return;
-        }
-        if (!apiKey) {
-          console.error('API Key is not defined');
-          return;
-        }
+    //     if (!token) {
+    //       console.error('JWT token is missing from localStorage');
+    //       return;
+    //     }
+    //     if (!apiUrl) {
+    //       console.error('API URL is not defined');
+    //       return;
+    //     }
+    //     if (!apiKey) {
+    //       console.error('API Key is not defined');
+    //       return;
+    //     }
 
-        console.log('Making API Request...');
-        console.log('Payload:', { startTime, endTime });
+    //     console.log('Making API Request...');
+    //     console.log('Payload:', { startTime, endTime });
 
-        const response = await axios.post(
-          `${apiUrl}/measurements/${this.$route.params.id}/${this.$route.params.sensorId}`,
-          {
-            startTime,
-            endTime,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'X-CoPower-API': apiKey,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+    //     const response = await axios.post(
+    //       `${apiUrl}/measurements/${this.$route.params.id}/${this.$route.params.sensorId}`,
+    //       {
+    //         startTime,
+    //         endTime,
+    //       },
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${token}`,
+    //           'X-CoPower-API': apiKey,
+    //           'Content-Type': 'application/json',
+    //         },
+    //       }
+    //     );
 
-        console.log('Response Data:', response.data);
-        this.measurements = response.data;
-      } catch (error) {
-        console.error('Error fetching measurements:', error);
-      } finally {
-        this.loading = false;
-        this.dataFetched = true;
-      }
-    },
+    //     console.log('Response Data:', response.data);
+    //     this.measurements = response.data;
+    //   } catch (error) {
+    //     console.error('Error fetching measurements:', error);
+    //   } finally {
+    //     this.loading = false;
+    //     this.dataFetched = true;
+    //   }
+    // },
 
     //multiple fetch sensors
     // async fetchMeasurements(startTime, endTime) {
@@ -483,10 +487,10 @@ export default {
     //     console.log('Payload:', { startTime, endTime });
 
     //     const sensorEndpoints = [
-    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor1`,
-    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor2`,
-    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor3`,
-    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor4`,
+    //       `${apiUrl}/measurements/orgid/sensorid`,
+    //       `${apiUrl}/measurements/orgid/sensorid`,
+    //       `${apiUrl}/measurements/orgid/sensorid`,
+    //       `${apiUrl}/measurements/orgid/sensorid`,
     //     ];
 
     //     const responses = await Promise.allSettled(
@@ -517,90 +521,309 @@ export default {
     // },
 
     //mock
+    // async fetchMeasurements(startTime, endTime) {
+    //   this.showChart = true;
+    //   this.loading = true;
+
+    //   console.log(
+    //     'Fetching from startTime:',
+    //     startTime,
+    //     'to endTime:',
+    //     endTime
+    //   );
+
+    //   try {
+    //     const token = localStorage.getItem('jwtToken');
+    //     const apiUrl = import.meta.env.VITE_API_URL;
+    //     const apiKey = import.meta.env.VITE_API_KEY;
+
+    //     // if (!token) {
+    //     //   console.error('Missing required configuration: token');
+    //     //   return;
+    //     // }
+
+    //     if (!apiUrl) {
+    //       console.error('Missing required configuration: API URL');
+    //       return;
+    //     }
+
+    //     if (!apiKey) {
+    //       console.error('Missing required configuration: API key');
+    //       return;
+    //     }
+
+    //     console.log('Making API Request...');
+    //     console.log('Payload:', { startTime, endTime });
+
+    //     const sensorEndpoints = [
+    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor1`,
+    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor2`,
+    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor3`,
+    //       `${apiUrl}/measurements/${this.$route.params.id}/sensor4`,
+    //     ];
+
+    //     const responses = await Promise.all(
+    //       sensorEndpoints.map((endpoint) =>
+    //         axios
+    //           .post(
+    //             endpoint,
+    //             { startTime, endTime },
+    //             {
+    //               headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //                 'X-CoPower-API': apiKey,
+    //                 'Content-Type': 'application/json',
+    //               },
+    //             }
+    //           )
+    //           .catch((error) => {
+    //             console.error(`Error fetching data from ${endpoint}:`, error);
+    //             return null; // Prevents `Promise.all` from failing completely
+    //           })
+    //       )
+    //     );
+
+    //     // Generate 24-hour mock data
+    //     const generateMockData = () => {
+    //       const now = new Date();
+    //       return Array.from({ length: 24 }, (_, i) => {
+    //         const time = new Date(now);
+    //         time.setHours(now.getHours() - i);
+    //         return {
+    //           date: time.toISOString(), // ✅ Ensure correct field name & format
+    //           value: (Math.random() * 100).toFixed(2),
+    //         };
+    //       }).reverse(); // Keep timestamps in ascending order
+    //     };
+
+    //     // Check if API responses are valid, otherwise use mock data
+    //     this.measurements = responses.map((response, index) => {
+    //       if (response && response.data) {
+    //         return response.data;
+    //       } else {
+    //         console.warn(`Using mock data for sensor ${index + 1}`);
+    //         return generateMockData();
+    //       }
+    //     });
+    //   } catch (error) {
+    //     console.error('Error fetching measurements:', error);
+    //   } finally {
+    //     this.loading = false;
+    //     this.dataFetched = true;
+    //   }
+    // },
+
+    //new one with backend integration
+    // async fetchMeasurements(startTime, endTime) {
+    //   this.showChart = true;
+    //   this.loading = true;
+
+    //   try {
+    //     const token = localStorage.getItem('jwtToken');
+    //     const apiUrl = import.meta.env.VITE_API_URL;
+    //     const apiKey = import.meta.env.VITE_API_KEY;
+
+    //     if (!token || !apiUrl || !apiKey) {
+    //       console.error(
+    //         'Missing required configuration (token, API URL, or API key)'
+    //       );
+    //       return;
+    //     }
+
+    //     console.log('Making API Request...');
+    //     console.log('Payload:', { startTime, endTime });
+
+    //     // Step 1: Get orgid from /organisation/list
+    //     const orgRes = await axios.get(`${apiUrl}/organisation/list`, {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //         'X-CoPower-API': apiKey,
+    //         'Content-Type': 'application/json',
+    //       },
+    //     });
+
+    //     if (!orgRes.data || orgRes.data.length === 0) {
+    //       console.error('No organisations found.');
+    //       return;
+    //     }
+
+    //     const orgid = orgRes.data[0].id; // Assuming you want the first organisation
+    //     console.log('Org ID:', orgid);
+
+    //     // Step 2: Get the list of sensors using orgid
+    //     const sensorRes = await axios.get(`${apiUrl}/sensor/${orgid}/list`, {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //         'X-CoPower-API': apiKey,
+    //         'Content-Type': 'application/json',
+    //       },
+    //     });
+
+    //     if (!sensorRes.data || sensorRes.data.length === 0) {
+    //       console.error('No sensors found for the organisation.');
+    //       return;
+    //     }
+
+    //     // Extract sensor tokens (sensorid)
+    //     const sensorEndpoints = sensorRes.data.map((sensor) => {
+    //       return `${apiUrl}/measurements/${orgid}/${sensor.token}`;
+    //     });
+
+    //     // Step 3: Fetch measurements for each sensor
+    //     const responses = await Promise.allSettled(
+    //       sensorEndpoints.map((endpoint) =>
+    //         axios.post(
+    //           endpoint,
+    //           { startTime, endTime },
+    //           {
+    //             headers: {
+    //               Authorization: `Bearer ${token}`,
+    //               'X-CoPower-API': apiKey,
+    //               'Content-Type': 'application/json',
+    //             },
+    //           }
+    //         )
+    //       )
+    //     );
+
+    //     this.measurements = responses
+    //       .filter((res) => res.status === 'fulfilled')
+    //       .map((res) => res.value.data);
+
+    //     console.log('Fetched Measurements:', this.measurements);
+    //   } catch (error) {
+    //     console.error('Error fetching measurements:', error);
+    //   } finally {
+    //     this.loading = false;
+    //     this.dataFetched = true;
+    //   }
+    // },
+
+    ///anohter
     async fetchMeasurements(startTime, endTime) {
       this.showChart = true;
       this.loading = true;
-
-      console.log(
-        'Fetching from startTime:',
-        startTime,
-        'to endTime:',
-        endTime
-      );
 
       try {
         const token = localStorage.getItem('jwtToken');
         const apiUrl = import.meta.env.VITE_API_URL;
         const apiKey = import.meta.env.VITE_API_KEY;
 
-        // if (!token) {
-        //   console.error('Missing required configuration: token');
-        //   return;
-        // }
-
-        if (!apiUrl) {
-          console.error('Missing required configuration: API URL');
-          return;
-        }
-
-        if (!apiKey) {
-          console.error('Missing required configuration: API key');
+        if (!token || !apiUrl || !apiKey) {
+          console.error(
+            'Missing required configuration (token, API URL, or API key)'
+          );
           return;
         }
 
         console.log('Making API Request...');
         console.log('Payload:', { startTime, endTime });
 
-        const sensorEndpoints = [
-          `${apiUrl}/measurements/${this.$route.params.id}/sensor1`,
-          `${apiUrl}/measurements/${this.$route.params.id}/sensor2`,
-          `${apiUrl}/measurements/${this.$route.params.id}/sensor3`,
-          `${apiUrl}/measurements/${this.$route.params.id}/sensor4`,
-        ];
+        // Step 1: Get orgid from /organisation/list
+        const orgRes = await axios.get(`${apiUrl}/organisation/list`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'X-CoPower-API': apiKey,
+            'Content-Type': 'application/json',
+          },
+        });
 
-        const responses = await Promise.all(
-          sensorEndpoints.map((endpoint) =>
-            axios
-              .post(
-                endpoint,
-                { startTime, endTime },
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    'X-CoPower-API': apiKey,
-                    'Content-Type': 'application/json',
-                  },
-                }
-              )
-              .catch((error) => {
-                console.error(`Error fetching data from ${endpoint}:`, error);
-                return null; // Prevents `Promise.all` from failing completely
-              })
-          )
-        );
+        if (!orgRes.data || orgRes.data.length === 0) {
+          console.error('No organisations found.');
+          return;
+        }
 
-        // Generate 24-hour mock data
-        const generateMockData = () => {
-          const now = new Date();
-          return Array.from({ length: 24 }, (_, i) => {
-            const time = new Date(now);
-            time.setHours(now.getHours() - i);
-            return {
-              date: time.toISOString(), // ✅ Ensure correct field name & format
-              value: (Math.random() * 100).toFixed(2),
-            };
-          }).reverse(); // Keep timestamps in ascending order
+        const orgid = orgRes.data[0].id; // Taking the want the first organisation
+        console.log('Org ID:', orgid);
+
+        // Step 2: Get the list of sensors using orgid
+        const sensorRes = await axios.get(`${apiUrl}/sensor/${orgid}/list`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'X-CoPower-API': apiKey,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!sensorRes.data || sensorRes.data.length === 0) {
+          console.error('No sensors found for the organisation.');
+          return;
+        }
+
+        // Extract sensor tokens (sensorid)
+        // const sensorEndpoints = sensorRes.data.map((sensor) => {
+        //   return `${apiUrl}/measurements/${orgid}/${sensor.token}`;
+        // });
+
+        // Directly map the sensors to endpoints, including name and unit
+        const sensorDetails = sensorRes.data.map((sensor) => ({
+          endpoint: `${apiUrl}/measurements/${orgid}/${sensor.token}`,
+          name: sensor.name,
+          unit: sensor.unit,
+        }));
+
+        // Step 3: Fetch measurements for each sensor
+        const fetchWithRetry = async (endpoint, retries = 3, delay = 1000) => {
+          try {
+            const res = await axios.post(
+              endpoint,
+              { startTime, endTime },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  'X-CoPower-API': apiKey,
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            return res.data;
+          } catch (error) {
+            if (retries > 0) {
+              console.warn(
+                `Request failed, retrying... (${retries} retries left)`
+              );
+              await new Promise((resolve) => setTimeout(resolve, delay));
+              return fetchWithRetry(endpoint, retries - 1, delay * 2);
+            } else {
+              console.error(`Failed after multiple retries: ${error}`);
+              return null;
+            }
+          }
         };
 
-        // Check if API responses are valid, otherwise use mock data
-        this.measurements = responses.map((response, index) => {
-          if (response && response.data) {
-            return response.data;
-          } else {
-            console.warn(`Using mock data for sensor ${index + 1}`);
-            return generateMockData();
-          }
-        });
+        const responses = await Promise.allSettled(
+          sensorDetails.map((sensor) => fetchWithRetry(sensor.endpoint))
+        );
+
+        // Filter successful responses and map data
+        this.measurements = responses
+          .filter((res) => res.status === 'fulfilled' && res.value)
+          .map((res) => res.value);
+
+        this.measurements = responses
+          .filter((res) => res.status === 'fulfilled' && res.value)
+          .map((res, index) => ({
+            ...res.value,
+            name: sensorDetails[index].name, // Add the sensor name
+            unit: sensorDetails[index].unit, // Add the sensor unit
+          }));
+
+        // this.measurements = responses
+        //   .filter((res) => res.status === 'fulfilled' && res.value)
+        //   .map((res, index) => {
+        //     const measurement = {
+        //       ...res.value, // Keep 'date' and 'value'
+        //       name: sensorDetails[index].name, // Add the sensor name for other purposes
+        //       unit: sensorDetails[index].unit, // Add the sensor unit for other purposes
+        //     };
+
+        //     // You can log the measurement to check if it's in the correct format
+        //     console.log(measurement);
+
+        //     return measurement;
+        //   });
+
+        console.log('Fetched Measurements:', this.measurements);
       } catch (error) {
         console.error('Error fetching measurements:', error);
       } finally {
@@ -611,12 +834,12 @@ export default {
   },
   mounted() {
     // Log the unit value for each sensor during the loop
-    Object.keys(this.sensorUnits).forEach((sensor) => {
-      console.log('Unit for sensor', sensor, ':', this.sensorUnits[sensor]);
-    });
-    Object.keys(this.sensorLabels).forEach((sensor) => {
-      console.log('Labels for sensor', sensor, ':', this.sensorLabels[sensor]);
-    });
+    // Object.keys(this.sensorUnits).forEach((sensor) => {
+    //   console.log('Unit for sensor', sensor, ':', this.sensorUnits[sensor]);
+    // });
+    // Object.keys(this.sensorLabels).forEach((sensor) => {
+    //   console.log('Labels for sensor', sensor, ':', this.sensorLabels[sensor]);
+    // });
     this.setRange('day');
   },
   // onMounted() {

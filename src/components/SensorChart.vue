@@ -104,17 +104,15 @@ export default {
   },
   mounted() {
     console.log('Unit passed to LineChart:', this.unit);
-    this.chartOptions.scales.y.title.text = this.unit; // Dynamically set the Y-axis title
+    this.chartOptions.scales.y.title.text = this.unit;
   },
   methods: {
     updateChartData(measurements) {
-      // Extract dates and values from the measurements array
       const labels = measurements.map((item) =>
         new Date(item.date).toLocaleString()
       );
       const data = measurements.map((item) => item.value);
 
-      // Update the chart data
       this.chartData.labels = labels;
       this.chartData.datasets[0].data = data;
     },
