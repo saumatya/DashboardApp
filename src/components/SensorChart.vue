@@ -37,6 +37,7 @@ export default {
     label: {
       type: String,
       required: true,
+      default: 'N/A',
     },
     measurements: {
       type: Array,
@@ -45,13 +46,12 @@ export default {
   },
   mounted() {
     console.log('SensorChart Mounted');
-    console.log('Unit passed:', this.unit); // Log the unit passed to the component
-    console.log('Label passed:', this.label); // Log the label passed to the component
+    console.log('Unit passed:', this.unit);
+    console.log('Label passed:', this.label);
 
-    this.chartOptions.scales.y.title.text = this.unit; // Dynamically set the Y-axis title
+    this.chartOptions.scales.y.title.text = this.unit;
   },
   watch: {
-    // Watch for changes in the measurements prop and update the chart data
     measurements: {
       immediate: true,
       handler(newMeasurements) {
@@ -64,16 +64,16 @@ export default {
   data() {
     return {
       chartData: {
-        labels: [], // Dates will go here
+        labels: [],
         datasets: [
           {
             label: this.label,
-            data: [], // Values will go here
+            data: [],
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2,
-            tension: 0.4, // Smooth curve for the line
-            fill: false, // Do not fill under the line
+            borderWidth: 1,
+            tension: 0.4,
+            fill: false,
           },
         ],
       },
@@ -95,7 +95,7 @@ export default {
           y: {
             title: {
               display: true,
-              text: '',
+              text: this.unit,
             },
           },
         },
