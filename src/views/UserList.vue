@@ -11,10 +11,10 @@
           <th>Name</th>
           <th>Organization</th>
           <th>Created Date</th>
-          <th>Actions</th>
           <th>Email</th>
           <th>Role</th>
-          <th>Phone</th>
+          <th>Actions</th>
+          <!-- <th>Phone</th> -->
         </tr>
       </thead>
       <tbody>
@@ -26,6 +26,9 @@
           <td>{{ user.name }}</td>
           <td>{{ organizationsMap[user.organization_id] || 'Unknown' }}</td>
           <td>{{ formatDate(user.created) }}</td>
+
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
           <td>
             <!-- Edit Button -->
             <router-link :to="{ name: 'user.edit', params: { id: user.id } }">
@@ -36,9 +39,7 @@
               Delete
             </button>
           </td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.role }}</td>
-          <td>{{ user.phone }}</td>
+          <!-- <td>{{ user.phone }}</td> -->
         </tr>
       </tbody>
     </table>
@@ -47,10 +48,13 @@
 
 <script>
 import axios from 'axios';
-
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
 export default {
   data() {
     return {
+      token:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiNjY1MDViMDItNzY4ZS00Y2RkLTg4NWEtMDMyNWQ2YWI4MGZkIiwib3JnYW5pc2F0aW9uIjoiM2RhNDI5NWEtODY4YS00MDU1LWIwMGUtM2I4ZTE1NDk5Y2Y4IiwibmJmIjoxNzQzNTgzNDE2LCJleHAiOjE3NDM2MTIyMTYsImlhdCI6MTc0MzU4MzQxNn0.K47sX1ol7_fhUySVmK6sWSJMV_OLjK2-BDrriVFKGG4',
       users: [],
       organizationsMap: {}, // To store organization id-to-name mapping
     };
@@ -66,14 +70,51 @@ export default {
     },
     async fetchOrganizations() {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/organizations');
-        // Create a mapping of organization_id to organization name
+        console.log('Fetching organizations...');
+
+        // Retrieve token (Ensure to remove hardcoded token in production)
+        var token =
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiNjY1MDViMDItNzY4ZS00Y2RkLTg4NWEtMDMyNWQ2YWI4MGZkIiwib3JnYW5pc2F0aW9uIjoiM2RhNDI5NWEtODY4YS00MDU1LWIwMGUtM2I4ZTE1NDk5Y2Y4IiwibmJmIjoxNzQzNTgzNDE2LCJleHAiOjE3NDM2MTIyMTYsImlhdCI6MTc0MzU4MzQxNn0.K47sX1ol7_fhUySVmK6sWSJMV_OLjK2-BDrriVFKGG4';
+
+        console.log('Using token:', token);
+
+        const apiUrl = `${API_URL}/dashboard/api/organisation/list`;
+        console.log('Request URL:', apiUrl);
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'X-CoPower-API': API_KEY,
+        };
+
+        console.log('Request Headers:', headers);
+
+        const response = await axios.get(apiUrl, { headers });
+
+        console.log('Response Status:', response.status);
+        console.log('Response Data:', response.data);
         this.organizationsMap = response.data.reduce((map, org) => {
           map[org.id] = org.name;
           return map;
         }, {});
+        // return response.data;
       } catch (error) {
         console.error('Error fetching organizations:', error);
+
+        if (error.response) {
+          console.error('Response Data:', error.response.data);
+          console.error('Response Status:', error.response.status);
+          console.error('Response Headers:', error.response.headers);
+        } else if (error.request) {
+          console.error(
+            'No response received. Request details:',
+            error.request
+          );
+        } else {
+          console.error('Request setup error:', error.message);
+        }
+
+        throw error; // Rethrow the error for handling upstream
       }
     },
     deleteOrganization(id) {
@@ -93,8 +134,27 @@ export default {
     },
     async fetchUsers() {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/users');
-        this.users = response.data;
+        var token =
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiNjY1MDViMDItNzY4ZS00Y2RkLTg4NWEtMDMyNWQ2YWI4MGZkIiwib3JnYW5pc2F0aW9uIjoiM2RhNDI5NWEtODY4YS00MDU1LWIwMGUtM2I4ZTE1NDk5Y2Y4IiwibmJmIjoxNzQzNTgzNDE2LCJleHAiOjE3NDM2MTIyMTYsImlhdCI6MTc0MzU4MzQxNn0.K47sX1ol7_fhUySVmK6sWSJMV_OLjK2-BDrriVFKGG4';
+        const response = await axios.get(`${API_URL}/api/user`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add bearer token to headers
+            'Content-Type': 'application/json',
+            'X-CoPower-API': API_KEY,
+          },
+        });
+        // this.users = response.data;
+        this.users = response.data.map((user) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          created: user.created,
+          password: '',
+          phone: user.contact_number,
+          role: user.access || 'user',
+          organization_id: user.organisation,
+          disabled: user.disabled || false,
+        }));
       } catch (error) {
         console.error('There was an error fetching the users:', error);
       }
@@ -134,6 +194,7 @@ th {
   padding: 10px 20px;
   cursor: pointer;
   border-radius: 5px;
+  margin-bottom: 10px;
 }
 .add-button:hover {
   background-color: #45a049;
@@ -156,5 +217,8 @@ th {
   padding: 10px 20px;
   cursor: pointer;
   border-radius: 5px;
+}
+.edit-button:hover {
+  background-color: rgb(199, 195, 195);
 }
 </style>

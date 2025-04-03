@@ -66,7 +66,7 @@ export default {
     deleteOrganization(id) {
       if (confirm('Are you sure you want to delete this organization?')) {
         axios
-          .delete(`http://127.0.0.1:8000/organizations/${id}`)
+          .delete(`http://localhost:5100/organizations/${id}`)
           .then(() => {
             // Remove the deleted organization from the list
             this.organizations = this.organizations.filter(
@@ -86,7 +86,7 @@ export default {
   },
   mounted() {
     axios
-      .get('http://127.0.0.1:8000/organizations')
+      .get('http://localhost:5100/organizations')
       .then((response) => {
         this.organizations = response.data;
       })

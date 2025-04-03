@@ -18,6 +18,9 @@
 <script>
 import axios from 'axios';
 import UserForm from '@/components/UserForm.vue';
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+const token = import.meta.env.VITE_TOKEN;
 
 export default {
   components: { UserForm },
@@ -29,19 +32,57 @@ export default {
     };
   },
   methods: {
+    // async createuser(newUser) {
+    //   // console.log("isEditMode in createuser:", this.isEditMode);
+    //   try {
+    //     const response = await axios.post(`${API_URL}/api/user`, newUser, {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //         'Content-Type': 'application/json',
+    //         'X-CoPower-API': API_KEY,
+    //       },
+    //     });
+    //     this.users.push(response.data);
+    //     console.log('New user Created:', response.data);
+
+    //     // Reset form after successful creation
+    //     this.resetForm();
+    //   } catch (error) {
+    //     console.error('Error creating user:', error);
+    //   }
+    // },
+
     async createuser(newUser) {
-      // console.log("isEditMode in createuser:", this.isEditMode);
+      // Log the incoming newUser object (request payload)
+      console.log('Request payload:', newUser);
+
       try {
+        // Log before making the request to see the payload you’re sending to the backend
+        console.log('Sending payload to API:', newUser);
+
         const response = await axios.post(
-          'http://127.0.0.1:8000/users',
-          newUser
+          `${API_URL}/api/user`, // The URL
+          newUser, // The payload (newUser should be sent as the second argument)
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'X-CoPower-API': API_KEY,
+            },
+          }
         );
+
+        // Log the response from the server
+        console.log('API Response:', response.data);
+
+        // If successful, add the new user to your users list
         this.users.push(response.data);
         console.log('New user Created:', response.data);
 
         // Reset form after successful creation
         this.resetForm();
       } catch (error) {
+        // Log any error that occurs during the request
         console.error('Error creating user:', error);
       }
     },
@@ -49,7 +90,14 @@ export default {
       // console.log("isEditMode in updateuser:", this.isEditMode);
       try {
         const response = await axios.put(
-          `http://127.0.0.1:8000/users/${updatedUser.id}`,
+          `${API_URL}/api/user/${updatedUser.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'X-CoPower-API': API_KEY,
+            },
+          },
           updatedUser
         );
         const index = this.users.findIndex(

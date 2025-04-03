@@ -530,7 +530,7 @@ export default {
 
       try {
         const token = localStorage.getItem('jwtToken');
-        const apiUrl = import.meta.env.VITE_API_URL;
+        const apiUrl = import.meta.env.VITE_API_URL + '/dashboard/api';
         const apiKey = import.meta.env.VITE_API_KEY;
 
         // if (!token) {

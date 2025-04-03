@@ -27,11 +27,16 @@
         </option>
       </select>
     </div>
-    <div>
+    <!-- <div>
       <label for="phone">Phone:</label>
       <input type="text" id="phone" v-model="user.phone" required />
-    </div>
-    <div>
+    </div> -->
+    <!-- <div>
+      <label for="disabled">Disabled:</label>
+      <input type="checkbox" id="disabled" v-model="user.disabled" />
+    </div> -->
+
+    <div v-if="isEditMode">
       <label for="disabled">Disabled:</label>
       <input type="checkbox" id="disabled" v-model="user.disabled" />
     </div>
@@ -42,7 +47,9 @@
 
 <script>
 import axios from 'axios';
-
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+const token = import.meta.env.VITE_TOKEN;
 export default {
   props: {
     userData: Object, // Used when editing
@@ -55,8 +62,8 @@ export default {
             name: '',
             email: '',
             password: '',
-            phone: '',
-            role: 'user',
+            // phone: '',
+            role: '',
             organization_id: '',
             disabled: false,
           },
@@ -71,7 +78,16 @@ export default {
   methods: {
     async fetchOrganizations() {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/organizations');
+        const response = await axios.get(
+          `${API_URL}/dashboard/api/organisation/list`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'X-CoPower-API': API_KEY,
+            },
+          }
+        );
         this.organizations = response.data.filter((org) => !org.disabled); // Exclude disabled organizations
       } catch (error) {
         console.error('Error fetching organizations:', error);
@@ -79,14 +95,14 @@ export default {
     },
     handleSubmit() {
       const payload = {
-        id: this.user.id,
-        name: this.user.name,
+        // id: this.user.id,
+        username: this.user.name,
         email: this.user.email,
         password: this.user.password,
-        phone: this.user.phone,
-        role: this.user.role,
-        organization_id: this.user.organization_id, // Send the selected organization ID
-        disabled: this.user.disabled,
+        // phone: this.user.phone,
+        access: this.user.role,
+        organisation: this.user.organization_id, // Send the selected organization ID
+        disabled: this.user.disabled || false,
       };
 
       if (this.isEditMode) {

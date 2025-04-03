@@ -25,7 +25,7 @@ import axios from 'axios';
 const email = ref('');
 const password = ref('');
 const router = useRouter();
-const API_URL = import.meta.env.VITE_API_URL + '/user/authenticate';
+const API_URL = import.meta.env.VITE_API_URL + '/api/user/authenticate';
 console.log(API_URL);
 // const API_URL =
 //   'https://copower.westeurope.cloudapp.azure.com/dashboard/api/user/authenticate';
