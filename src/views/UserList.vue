@@ -50,11 +50,11 @@
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
+// const token = import.meta.env.VITE_TOKEN;
+const token = localStorage.getItem('jwtToken');
 export default {
   data() {
     return {
-      token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiNjY1MDViMDItNzY4ZS00Y2RkLTg4NWEtMDMyNWQ2YWI4MGZkIiwib3JnYW5pc2F0aW9uIjoiM2RhNDI5NWEtODY4YS00MDU1LWIwMGUtM2I4ZTE1NDk5Y2Y4IiwibmJmIjoxNzQzNTgzNDE2LCJleHAiOjE3NDM2MTIyMTYsImlhdCI6MTc0MzU4MzQxNn0.K47sX1ol7_fhUySVmK6sWSJMV_OLjK2-BDrriVFKGG4',
       users: [],
       organizationsMap: {}, // To store organization id-to-name mapping
     };
@@ -73,8 +73,6 @@ export default {
         console.log('Fetching organizations...');
 
         // Retrieve token (Ensure to remove hardcoded token in production)
-        var token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiNjY1MDViMDItNzY4ZS00Y2RkLTg4NWEtMDMyNWQ2YWI4MGZkIiwib3JnYW5pc2F0aW9uIjoiM2RhNDI5NWEtODY4YS00MDU1LWIwMGUtM2I4ZTE1NDk5Y2Y4IiwibmJmIjoxNzQzNTgzNDE2LCJleHAiOjE3NDM2MTIyMTYsImlhdCI6MTc0MzU4MzQxNn0.K47sX1ol7_fhUySVmK6sWSJMV_OLjK2-BDrriVFKGG4';
 
         console.log('Using token:', token);
 
@@ -134,8 +132,6 @@ export default {
     },
     async fetchUsers() {
       try {
-        var token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiNjY1MDViMDItNzY4ZS00Y2RkLTg4NWEtMDMyNWQ2YWI4MGZkIiwib3JnYW5pc2F0aW9uIjoiM2RhNDI5NWEtODY4YS00MDU1LWIwMGUtM2I4ZTE1NDk5Y2Y4IiwibmJmIjoxNzQzNTgzNDE2LCJleHAiOjE3NDM2MTIyMTYsImlhdCI6MTc0MzU4MzQxNn0.K47sX1ol7_fhUySVmK6sWSJMV_OLjK2-BDrriVFKGG4';
         const response = await axios.get(`${API_URL}/api/user`, {
           headers: {
             Authorization: `Bearer ${token}`, // Add bearer token to headers

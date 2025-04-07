@@ -284,7 +284,13 @@ export default {
 
       try {
         const token = localStorage.getItem('jwtToken');
-        const orgid = this.getJwtClaims(token).organisation;
+        let orgid;
+        if (token) {
+          orgid = this.getJwtClaims(token).organisation;
+        } else {
+          console.log('No token found');
+        }
+        // const orgid = this.getJwtClaims(token).organisation;
         const apiUrl = import.meta.env.VITE_API_URL + '/dashboard/api';
         const apiKey = import.meta.env.VITE_API_KEY;
 

@@ -1,24 +1,44 @@
 <template>
-  <div class="navigation">
+  <!-- <div class="navigation"> -->
+  <div v-if="!hideNavigation" class="navigation">
     <router-link id="home" to="/home">Home</router-link>
     <router-link id="OrganizationShow" to="/organization"
       >Organization</router-link
     >
     <router-link id="Sensors" to="/home">Sensors</router-link>
+    <router-link id="Admin" to="/admin" v-if="isAdmin()">Settings</router-link>
     <!-- <router-link id="Logout" to="/logout">Logout</router-link> -->
     <a href="#" id="Logout" @click="handleLogout">Logout</a>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
+import { computed } from 'vue';
+const jwtDecode = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
+// const isAdmin = () =>
+//   jwtDecode(localStorage.getItem('token'))?.role === 'admin' || false;
+
+const isAdmin = () => localStorage.getItem('role') === 'admin' || false;
 
 const handleLogout = () => {
   localStorage.removeItem('jwtToken');
+  localStorage.removeItem('role');
   router.push('/');
 };
+
+// Hide navigation bar on specific routes
+const hideNavigation = computed(() => route.path === '/forgot-password');
 </script>
 <style>
 .navigation {

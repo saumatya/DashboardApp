@@ -10,7 +10,8 @@ import axios from 'axios';
 import UserForm from '@/components/UserForm.vue';
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
-const token = import.meta.env.VITE_TOKEN;
+// const token = import.meta.env.VITE_TOKEN;
+const token = localStorage.getItem('jwtToken');
 
 export default {
   // props: [id],
@@ -32,6 +33,7 @@ export default {
   methods: {
     async fetchUser() {
       const userId = this.$route.params.id;
+      // console.log('token', token);
       // const userId = this.id;
       console.log('User ID from props:', this.id); // Make sure this prints the correct ID
       console.log('User ID from route params:', this.$route.params.id); // Make sure this prints the correct ID

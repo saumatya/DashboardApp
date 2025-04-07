@@ -15,6 +15,9 @@
 
     <button type="submit">Login</button>
   </form>
+  <router-link id="forgot-password" to="/forgot-password"
+    >Forgot Password?</router-link
+  >
 </template>
 
 <script setup>
@@ -36,14 +39,20 @@ if (email.value === 'admin@gmail.com' && password.value) {
   console.log('Admin Login successful');
   router.push('/admin'); //ADMING GOES TO ADMIN PAGE
 }
-
+const jwtDecode = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
 //AUTHENTICATING WITH API
 const handleLogin = async () => {
-  if (email.value === 'admin@gmail.com' && password.value) {
-    console.log('Admin Login successful');
-    router.push('/admin'); //ADMING GOES TO ADMIN PAGE
-    return;
-  }
+  // if (email.value === 'admin@gmail.com' && password.value) {
+  //   console.log('Admin Login successful');
+  //   router.push('/admin'); //ADMING GOES TO ADMIN PAGE
+  //   return;
+  // }
   try {
     //direct redirection REMOVE LATER
     //router.push('/home');
@@ -65,7 +74,17 @@ const handleLogin = async () => {
 
     if (response.status === 200) {
       console.log('Login successful');
+      console.log(response.data.token);
       localStorage.setItem('jwtToken', response.data.token);
+      var claims = jwtDecode(response.data.token);
+      console.log('CLAIMS:', claims);
+
+      if (claims.role === 'admin') {
+        console.log('you are admin');
+        localStorage.setItem('role', 'admin');
+        router.push('/admin'); //ADMIN GOES TO ADMIN PAGE
+        return;
+      }
       router.push('/home');
     }
   } catch (error) {
