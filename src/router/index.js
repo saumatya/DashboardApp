@@ -10,6 +10,7 @@ import OrganizationEdit from '../views/OrganizationEdit.vue';
 import UserFormPage from '../views/UserFormPage.vue';
 import UserEdit from '../views/UserEdit.vue';
 import ForgotPassword from '../views/ForgotPassword.vue';
+import ResetPassword from '../views/ResetPassword.vue';
 
 // Arrow function for jwtDecode
 const jwtDecode = (token) => {
@@ -85,6 +86,11 @@ const routes = [
     component: ForgotPassword,
   },
   {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: ResetPassword,
+  },
+  {
     path: '/organization',
     name: 'Organization',
     component: Organization,
@@ -130,7 +136,12 @@ router.beforeEach((to, from, next) => {
 
   // Check if token is not present and the user is trying to access a protected route
   // if (!token && to.path !== '/') {
-  if (!token && to.path !== '/' && to.path !== '/forgot-password') {
+  if (
+    !token &&
+    to.path !== '/' &&
+    to.path !== '/forgot-password' &&
+    to.path !== '/reset-password'
+  ) {
     // Redirect to homepage if not logged in
     next('/'); // You can change this to '/login' if you have a separate login page
   } else {

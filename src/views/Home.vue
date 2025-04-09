@@ -257,7 +257,7 @@ export default {
       if (range === 'day') {
         // startTime = new Date(now.setHours(0, 0, 0, 0)).toISOString(); // Start of today
         // endTime = new Date(now.setHours(23, 59, 59, 999)).toISOString(); // End of today
-        //hardcoded
+        //hardcoded to simulate today
         startTime = new Date('2024-10-01T00:00:00').toISOString(); // Start of October 1, 2024
         endTime = new Date('2024-10-01T23:59:59.999').toISOString(); // End of October 1, 2024
       } else if (range === 'week') {

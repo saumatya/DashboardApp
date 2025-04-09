@@ -22,7 +22,7 @@ const handleForgotPassword = async () => {
   try {
     const response = await axios.post(
       API_URL,
-      { email: email.value },
+      { Email: email.value },
       {
         headers: {
           'Content-Type': 'application/json',

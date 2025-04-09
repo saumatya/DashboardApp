@@ -29,16 +29,16 @@ const email = ref('');
 const password = ref('');
 const router = useRouter();
 const API_URL = import.meta.env.VITE_API_URL + '/api/user/authenticate';
-console.log(API_URL);
+// console.log(API_URL);
 // const API_URL =
 //   'https://copower.westeurope.cloudapp.azure.com/dashboard/api/user/authenticate';
 const API_KEY = import.meta.env.VITE_API_KEY;
-console.log(API_KEY);
+// console.log(API_KEY);
 
-if (email.value === 'admin@gmail.com' && password.value) {
-  console.log('Admin Login successful');
-  router.push('/admin'); //ADMING GOES TO ADMIN PAGE
-}
+// if (email.value === 'admin@gmail.com' && password.value) {
+//   console.log('Admin Login successful');
+//   router.push('/admin'); //ADMING GOES TO ADMIN PAGE
+// }
 const jwtDecode = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -48,11 +48,6 @@ const jwtDecode = (token) => {
 };
 //AUTHENTICATING WITH API
 const handleLogin = async () => {
-  // if (email.value === 'admin@gmail.com' && password.value) {
-  //   console.log('Admin Login successful');
-  //   router.push('/admin'); //ADMING GOES TO ADMIN PAGE
-  //   return;
-  // }
   try {
     //direct redirection REMOVE LATER
     //router.push('/home');

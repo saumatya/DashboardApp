@@ -38,7 +38,9 @@ const handleLogout = () => {
 };
 
 // Hide navigation bar on specific routes
-const hideNavigation = computed(() => route.path === '/forgot-password');
+const hideNavigation = computed(
+  () => route.path === '/forgot-password' || route.path === '/reset-password'
+);
 </script>
 <style>
 .navigation {
