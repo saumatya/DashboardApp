@@ -16,8 +16,8 @@
         />
         <span v-if="errors.password">{{ errors.password }}</span>
       </div>
-      <button type="submit">Reset</button>
-      <!-- <p v-if="errorMessage" class="error">{{ errorMessage }}</p> -->
+      <button type="submit" :disabled="!isTokenValid">Reset</button>
+      <p v-if="errorMessage" class="error-alert">⚠️{{ errorMessage }}</p>
       <ul class="password-rules">
         <li>✓ At least one letter (a–z or A–Z)</li>
         <li>✓ At least one number (0–9)</li>
@@ -39,15 +39,42 @@ const confirmPassword = ref('');
 const token = ref(''); // Token will be stored here
 const errorMessage = ref('');
 const errors = reactive({ password: '' });
+const isTokenValid = ref(false);
 
 const apiKey = import.meta.env.VITE_API_KEY;
 const API_URL = import.meta.env.VITE_API_URL + '/api/user/reset-password';
 // API key from environment variables
 // console.log(apiKey);
-onMounted(() => {
+onMounted(async () => {
   // Capture the token from the URL parameters
   token.value = new URLSearchParams(window.location.search).get('token');
   console.log('reset token:', token.value); // For debugging purposes
+
+  if (!token.value) {
+    errorMessage.value = 'Invalid or missing token.';
+    isTokenValid.value = false;
+    return;
+  }
+
+  // Validate the token with backend
+  try {
+    await axios.post(
+      import.meta.env.VITE_API_URL + '/api/user/validate-reset-token',
+      { token: token.value },
+      {
+        headers: {
+          'X-CoPower-API': apiKey,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    isTokenValid.value = true;
+  } catch (error) {
+    errorMessage.value =
+      error.response?.data?.message ||
+      'Invalid or expired token. Please contact admin.';
+    isTokenValid.value = false;
+  }
 });
 
 const validateForm = () => {
@@ -77,6 +104,10 @@ const validateForm = () => {
 };
 
 const submitForm = async () => {
+  if (!isTokenValid.value) {
+    errorMessage.value = 'Invalid or expired token.';
+    return;
+  }
   if (!validateForm()) {
     console.log('formdata not valid');
     return;
@@ -126,5 +157,14 @@ const submitForm = async () => {
 /* Add styles as needed */
 .error {
   color: red;
+}
+.error-alert {
+  background-color: #ffe0e0;
+  color: #b00020;
+  border: 1px solid #b00020;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 12px 0;
+  font-weight: bold;
 }
 </style>
