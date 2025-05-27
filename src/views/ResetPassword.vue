@@ -14,33 +14,73 @@
           v-model="confirmPassword"
           required
         />
+        <span v-if="errors.password">{{ errors.password }}</span>
       </div>
-      <button type="submit">Reset Password</button>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <button type="submit">Reset</button>
+      <!-- <p v-if="errorMessage" class="error">{{ errorMessage }}</p> -->
+      <ul class="password-rules">
+        <li>✓ At least one letter (a–z or A–Z)</li>
+        <li>✓ At least one number (0–9)</li>
+        <li>✓ At least one special symbol (e.g. @, #, !)</li>
+        <li>✓ 10–40 characters long</li>
+      </ul>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
+const router = useRouter();
 const password = ref('');
 const confirmPassword = ref('');
 const token = ref(''); // Token will be stored here
 const errorMessage = ref('');
+const errors = reactive({ password: '' });
 
 const apiKey = import.meta.env.VITE_API_KEY;
 const API_URL = import.meta.env.VITE_API_URL + '/api/user/reset-password';
 // API key from environment variables
-console.log(apiKey);
+// console.log(apiKey);
 onMounted(() => {
   // Capture the token from the URL parameters
   token.value = new URLSearchParams(window.location.search).get('token');
   console.log('reset token:', token.value); // For debugging purposes
 });
 
+const validateForm = () => {
+  password.value = password.value.trim();
+  confirmPassword.value = confirmPassword.value.trim();
+  let isValid = true;
+  if (!password.value || !confirmPassword.value) {
+    errors.password = 'Password is required.';
+    isValid = false;
+  } else if (password.value !== confirmPassword.value) {
+    errors.password = 'Passwords do not match.';
+    isValid = false;
+  } else if (password.value.length < 10 || password.value.length > 40) {
+    errors.password = 'Password must be between 10 to 40 characters.';
+    isValid = false;
+  } else if (!/[a-zA-Z]/.test(password.value)) {
+    errors.password = 'Password must contain at least one letter.';
+    isValid = false;
+  } else if (!/\d/.test(password.value)) {
+    errors.password = 'Password must contain at least one number.';
+    isValid = false;
+  } else if (!/[!@#$%^&*]/.test(password.value)) {
+    errors.password = 'Password must contain at least one special character.';
+    isValid = false;
+  }
+  return isValid;
+};
+
 const submitForm = async () => {
+  if (!validateForm()) {
+    console.log('formdata not valid');
+    return;
+  }
   // Basic validation for the passwords
   if (password.value !== confirmPassword.value) {
     errorMessage.value = 'Passwords do not match.';
@@ -63,7 +103,8 @@ const submitForm = async () => {
       }
     );
     alert('Password reset successful!');
-    //redirect to the login page
+    console.log('Password reset successful!');
+    router.push('/login'); // Redirect to the login page
 
     // if (response.ok) {
     //   alert('Password reset successful!');

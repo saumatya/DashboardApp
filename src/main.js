@@ -1,22 +1,22 @@
-import { createApp } from 'vue'
+import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
-import router from './router'
-import './style.css'
-import App from './App.vue'
+import router from './router';
+import './style.css';
+import App from './App.vue';
 import DatePicker from 'primevue/datepicker';
 import Button from 'primevue/button';
+// import './assets/tailwind.css';
 
-const app= createApp(App);
+const app = createApp(App);
 
 app.component('Button', Button);
 app.component('DatePicker', DatePicker);
 app
-.use(router)
-.use(PrimeVue, {
+  .use(router)
+  .use(PrimeVue, {
     theme: {
-        preset: Aura
-    }
-})
-.mount('#app')
-
+      preset: Aura,
+    },
+  })
+  .mount('#app');

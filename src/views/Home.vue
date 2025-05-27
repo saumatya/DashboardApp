@@ -274,6 +274,27 @@ export default {
         return;
       }
 
+      //       // Hardcoded date for testing (e.g., January 1st, 2025)
+      // const fakeNow = new Date('2025-01-01T00:00:00'); // Replace with any date you want to simulate
+
+      // if (range === 'day') {
+      //     startTime = new Date(fakeNow.setHours(0, 0, 0, 0)).toISOString(); // Start of simulated "today"
+      //     endTime = new Date(fakeNow.setHours(23, 59, 59, 999)).toISOString(); // End of simulated "today"
+      // } else if (range === 'week') {
+      //     const startOfWeek = new Date(fakeNow);
+      //     startOfWeek.setDate(fakeNow.getDate() - fakeNow.getDay()); // Start of the week (Sunday)
+      //     startTime = new Date(startOfWeek.setHours(0, 0, 0, 0)).toISOString();
+      //     endTime = new Date(fakeNow.setHours(23, 59, 59, 999)).toISOString(); // End of "today"
+      // } else if (range === 'month') {
+      //     const startOfMonth = new Date(fakeNow.getFullYear(), fakeNow.getMonth(), 1); // Start of the simulated month
+      //     const endOfMonth = new Date(fakeNow.getFullYear(), fakeNow.getMonth() + 1, 0); // End of the simulated month
+      //     startTime = new Date(startOfMonth.setHours(0, 0, 0, 0)).toISOString();
+      //     endTime = new Date(endOfMonth.setHours(23, 59, 59, 999)).toISOString(); // End of the simulated month
+      // } else if (range === 'custom') {
+      //     console.log('Custom range selected. Waiting for user to select dates.');
+      //     return;
+      // }
+
       this.fetchMeasurements(startTime, endTime);
     },
 

@@ -2,16 +2,12 @@
   <form @submit.prevent="handleLogin">
     <h1>Login</h1>
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" v-model="email" required />
+    <input type="email" id="email" name="email" v-model="email" />
+    <span v-if="errors.email">{{ errors.email }}</span>
 
     <label for="password">Password</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      v-model="password"
-      required
-    />
+    <input type="password" id="password" v-model="password" required />
+    <span v-if="errors.password">{{ errors.password }}</span>
 
     <button type="submit">Login</button>
   </form>
@@ -19,26 +15,22 @@
     >Forgot Password?</router-link
   >
 </template>
-
+<style>
+/* @import 'tailwindcss'; */
+</style>
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
+const errors = reactive({ email: '', password: '' });
+
 const router = useRouter();
 const API_URL = import.meta.env.VITE_API_URL + '/api/user/authenticate';
-// console.log(API_URL);
-// const API_URL =
-//   'https://copower.westeurope.cloudapp.azure.com/dashboard/api/user/authenticate';
 const API_KEY = import.meta.env.VITE_API_KEY;
-// console.log(API_KEY);
 
-// if (email.value === 'admin@gmail.com' && password.value) {
-//   console.log('Admin Login successful');
-//   router.push('/admin'); //ADMING GOES TO ADMIN PAGE
-// }
 const jwtDecode = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -46,12 +38,45 @@ const jwtDecode = (token) => {
     return null;
   }
 };
+
+const validateForm = () => {
+  email.value = email.value.trim();
+  password.value = password.value.trim();
+  errors.email = '';
+  errors.password = '';
+  let isValid = true;
+  if (!email.value) {
+    errors.email = 'Email is required.';
+    isValid = false;
+  } else if (!/^\S+@\S+\.\S+$/.test(email.value)) {
+    errors.email = 'Enter a valid email.';
+    isValid = false;
+  }
+  if (!password.value) {
+    errors.password = 'Password is required.';
+    isValid = false;
+  } else if (password.value.length < 10 || password.value.length > 40) {
+    errors.password = 'Password must be at between 10 to 40 characters.';
+    isValid = false;
+  } else if (!/[a-zA-Z]/.test(password.value)) {
+    errors.password = 'Password must contain at least one letter.';
+    isValid = false;
+  } else if (!/[0-9]/.test(password.value)) {
+    errors.password = 'Password must contain at least one number.';
+    isValid = false;
+  } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password.value)) {
+    errors.password = 'Password must contain at least one special symbol.';
+    isValid = false;
+  }
+  return isValid;
+};
+
 //AUTHENTICATING WITH API
 const handleLogin = async () => {
+  if (!validateForm()) {
+    return;
+  }
   try {
-    //direct redirection REMOVE LATER
-    //router.push('/home');
-    //return;
     const response = await axios.post(
       API_URL,
       {
@@ -92,55 +117,4 @@ const handleLogin = async () => {
     }
   }
 };
-
-//     const handleLogin = async () => {
-//     let data = JSON.stringify({
-//         email: email.value,
-//         password: password.value
-//     });
-
-//     let config = {
-//         method: 'post',
-//         maxBodyLength: Infinity,
-//         url: API_URL,
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CoPower-API': API_KEY
-//         },
-//         data
-//     };
-
-//     axios.request(config)
-//         .then(response => {
-//             console.log(response);
-//             if (response.status === 200) {
-//                 console.log('Login successful');
-//                 localStorage.setItem('jwtToken', response.data.token);
-//                 router.push('/home');
-//             }
-//         })
-//         .catch(error => {
-//             if (error.response) {
-//                 console.error("Error Response:", error.response.data);
-//                 alert("Login failed: " + error.response.data.message);
-//             } else {
-//                 console.error("Axios error:", error);
-//                 alert("An error occurred.");
-//             }
-//         });
-// };
-
-//     const handleLogin = () => {
-//     if (email.value==="user@gmail.com" && password.value) {
-//       console.log('User Login successful');
-//       router.push('/home'); //USER GOES TO HOME PAGE
-
-//     }else if (email.value==="admin@gmail.com" && password.value){
-//       console.log('Admin Login successful');
-//       router.push('/admin'); //ADMING GOES TO ADMIN PAGE
-//     }
-//     else {
-//       alert('Please enter valid credentials');
-//     }
-// };
 </script>

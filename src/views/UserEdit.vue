@@ -33,7 +33,7 @@ export default {
   methods: {
     async fetchUser() {
       const userId = this.$route.params.id;
-      // console.log('token', token);
+      console.log('User detail fetch with token: ', token);
       // const userId = this.id;
       console.log('User ID from props:', this.id); // Make sure this prints the correct ID
       console.log('User ID from route params:', this.$route.params.id); // Make sure this prints the correct ID

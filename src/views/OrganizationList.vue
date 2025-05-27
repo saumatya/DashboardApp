@@ -9,7 +9,7 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Created Date</th>
+          <!-- <th>Created Date</th> -->
           <th>Actions</th>
         </tr>
       </thead>
@@ -20,7 +20,7 @@
           :class="{ disabledRow: organization.disabled }"
         >
           <td>{{ organization.name }}</td>
-          <td>{{ formatDate(organization.created) }}</td>
+          <!-- <td>{{ formatDate(organization.created) }}</td> -->
           <td>
             <!-- Edit Button -->
             <router-link
@@ -47,6 +47,9 @@
 
 <script>
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+const token = localStorage.getItem('jwtToken');
 
 export default {
   data() {
@@ -85,8 +88,15 @@ export default {
     },
   },
   mounted() {
+    const apiUrl = `${API_URL}/dashboard/api/organisation/list`;
     axios
-      .get('http://localhost:5100/organizations')
+      .get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'X-CoPower-API': API_KEY,
+        },
+      })
       .then((response) => {
         this.organizations = response.data;
       })
