@@ -17,7 +17,7 @@
         {{ option.label }}
       </button>
     </div>
-    <div class="dropdown-container">
+    <div class="dropdown-container" v-if="selectedRange !== 'custom'">
       <div class="month-dropdown">
         <select
           name="months"
@@ -55,7 +55,8 @@
         placeholder="Select Date Range"
       />
       <!-- <Button label="Load" @click="fetchMeasurements" /> -->
-      <Button label="Load" @click="handleCustomRange" />
+      <!-- <Button label="Load" @click="handleCustomRange" /> -->
+      <Button id="custom-load-btn" label="Load" @click="handleCustomRange" />
     </div>
 
     <!-- <div class="sensor-chart-container">
@@ -190,11 +191,13 @@ export default {
       if (newDates && newDates.length > 0) {
         this.startTime = new Date(newDates[0]).toISOString();
 
-        // Set maxDate to 30 days after the selected start date
-        let newMaxDate = new Date(newDates[0]);
-        newMaxDate.setDate(newMaxDate.getDate() + 30);
-        this.maxDate = newMaxDate;
+        // Set limit to 30 days after the selected start date
+        // const limit = 30; // days
+        // let newMaxDate = new Date(newDates[0]);
+        // newMaxDate.setDate(newMaxDate.getDate() + limit);
+        // this.maxDate = newMaxDate;
 
+        this.maxDate = null; // Reset maxDate to allow any date selection
         if (newDates.length === 2) {
           this.endTime = new Date(newDates[1]).toISOString();
           if (newDates[1] < newDates[0]) {
@@ -487,6 +490,9 @@ export default {
 };
 </script>
 <style>
+#custom-load-btn .p-button-label {
+  color: #fff !important;
+}
 h2 {
   padding-top: 30px;
 }
