@@ -111,7 +111,13 @@ const handleLogin = async () => {
   } catch (error) {
     if (error.response) {
       console.error('Error Response:', error.response.data);
-      alert('Login failed: ' + error.response.data.message);
+
+      if (error.response.data == 'AUT767551') {
+        console.error('User is disabled');
+        alert('User is disabled. Please contact administrator.');
+      }
+
+      alert('Login failed');
     } else {
       console.error('Axios error:', error);
       alert('An error occurred.');

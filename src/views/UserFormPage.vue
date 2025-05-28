@@ -22,7 +22,6 @@ import UserForm from '@/components/UserForm.vue';
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 // const token = import.meta.env.VITE_TOKEN;
-const token = localStorage.getItem('jwtToken');
 
 export default {
   components: { UserForm },
@@ -60,6 +59,7 @@ export default {
       console.log('Request payload:', newUser);
 
       try {
+        const token = localStorage.getItem('jwtToken');
         // Log before making the request to see the payload you’re sending to the backend
         console.log('Sending payload to API:', newUser);
 
@@ -94,6 +94,7 @@ export default {
     async updateuser(updatedUser) {
       // console.log("isEditMode in updateuser:", this.isEditMode);
       try {
+        const token = localStorage.getItem('jwtToken');
         const response = await axios.put(
           `${API_URL}/api/user/${updatedUser.id}`,
           {

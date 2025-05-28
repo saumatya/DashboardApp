@@ -8,10 +8,10 @@
       <label for="email">Email:</label>
       <input type="email" id="email" v-model="user.email" required />
     </div>
-    <div>
+    <!-- <div>
       <label for="password">Password:</label>
       <input type="password" id="password" v-model="user.password" required />
-    </div>
+    </div> -->
     <div>
       <label for="role">Role:</label>
       <select id="role" v-model="user.role" required>
@@ -35,6 +35,10 @@
       <label for="disabled">Disabled:</label>
       <input type="checkbox" id="disabled" v-model="user.disabled" />
     </div> -->
+    <div v-if="!isEditMode">
+      <label for="password">Password:</label>
+      <input type="password" id="password" v-model="user.password" required />
+    </div>
 
     <div v-if="isEditMode">
       <label for="disabled">Disabled:</label>
@@ -50,7 +54,7 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 // const token = import.meta.env.VITE_TOKEN;
-const token = localStorage.getItem('jwtToken');
+// const token = localStorage.getItem('jwtToken');
 export default {
   props: {
     userData: Object, // Used when editing
@@ -79,6 +83,7 @@ export default {
   methods: {
     async fetchOrganizations() {
       try {
+        const token = localStorage.getItem('jwtToken');
         const response = await axios.get(
           `${API_URL}/dashboard/api/organisation/list`,
           {

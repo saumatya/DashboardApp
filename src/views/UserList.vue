@@ -73,7 +73,7 @@ export default {
         console.log('Fetching organizations...');
 
         // Retrieve token (Ensure to remove hardcoded token in production)
-
+        const token = localStorage.getItem('jwtToken');
         console.log('Using token:', token);
 
         const apiUrl = `${API_URL}/dashboard/api/organisation/list`;

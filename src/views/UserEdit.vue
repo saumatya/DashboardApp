@@ -11,7 +11,7 @@ import UserForm from '@/components/UserForm.vue';
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 // const token = import.meta.env.VITE_TOKEN;
-const token = localStorage.getItem('jwtToken');
+// const token = localStorage.getItem('jwtToken');
 
 export default {
   // props: [id],
@@ -33,10 +33,12 @@ export default {
   methods: {
     async fetchUser() {
       const userId = this.$route.params.id;
+      const token = localStorage.getItem('jwtToken');
       console.log('User detail fetch with token: ', token);
       // const userId = this.id;
       console.log('User ID from props:', this.id); // Make sure this prints the correct ID
       console.log('User ID from route params:', this.$route.params.id); // Make sure this prints the correct ID
+
       try {
         const response = await axios.get(`${API_URL}/api/user/${userId}`, {
           headers: {
@@ -64,6 +66,9 @@ export default {
     },
     updateUser(updatedUser) {
       const userId = this.$route.params.id;
+      if ('password' in updatedUser) {
+        delete updatedUser.password;
+      }
       // Call API to update the user
       axios
         .put(`${API_URL}/api/user/${userId}`, updatedUser, {
@@ -75,6 +80,7 @@ export default {
         })
         .then((response) => {
           console.log('User updated:', response.data);
+          alert('User updated successfully!');
           this.$router.push('/admin/users'); // Redirect after successful update
         })
         .catch((error) => {
