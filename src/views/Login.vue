@@ -96,6 +96,7 @@ const handleLogin = async () => {
       console.log('Login successful');
       console.log(response.data.token);
       localStorage.setItem('jwtToken', response.data.token);
+      localStorage.setItem('username', response.data.name);
       var claims = jwtDecode(response.data.token);
       console.log('CLAIMS:', claims);
 

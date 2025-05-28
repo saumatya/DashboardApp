@@ -12,6 +12,7 @@
         {{ user.name }} - {{ user.disabled ? 'Disabled' : 'Active' }}
       </li>
     </ul>
+    <div v-if="statusMessage" class="status-message">{{ statusMessage }}</div>
   </div>
 </template>
 
@@ -27,9 +28,10 @@ export default {
   components: { UserForm },
   data() {
     return {
-      user: { name: '', createdDate: '', disabled: false, id: null }, // Default empty data
-      isEditMode: false, // Default to create mode
-      users: [], // List of users (stored in-memory)
+      user: { name: '', createdDate: '', disabled: false, id: null },
+      isEditMode: false,
+      users: [],
+      statusMessage: '', // <-- Add this line
     };
   },
   methods: {
@@ -78,13 +80,15 @@ export default {
 
         // If successful, add the new user to your users list
         this.users.push(response.data);
-        console.log('New user Created:', response.data);
-
+        this.statusMessage = '✅ User created successfully!';
+        alert(this.statusMessage);
         // Reset form after successful creation
         this.resetForm();
       } catch (error) {
-        // Log any error that occurs during the request
+        this.statusMessage =
+          error.response?.data?.message || '❌ Could not create user.';
         console.error('Error creating user:', error);
+        alert(this.statusMessage);
       }
     },
     async updateuser(updatedUser) {
@@ -152,3 +156,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.status-message {
+  margin: 12px 0;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  background: #f0f0f0;
+}
+</style>

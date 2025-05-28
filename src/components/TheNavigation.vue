@@ -9,15 +9,17 @@
     <router-link id="Admin" to="/admin" v-if="isAdmin()">Settings</router-link>
     <!-- <router-link id="Logout" to="/logout">Logout</router-link> -->
     <a href="#" id="Logout" @click="handleLogout">Logout</a>
+    <span v-if="username" class="username">{{ username }}</span>
   </div>
 </template>
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
+import { ref, computed } from 'vue';
 
 const router = useRouter();
 const route = useRoute();
-import { computed } from 'vue';
+// import { computed } from 'vue';
 const jwtDecode = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -29,11 +31,13 @@ const jwtDecode = (token) => {
 // const isAdmin = () =>
 //   jwtDecode(localStorage.getItem('token'))?.role === 'admin' || false;
 
+const username = ref(localStorage.getItem('username') || '');
 const isAdmin = () => localStorage.getItem('role') === 'admin' || false;
 
 const handleLogout = () => {
   localStorage.removeItem('jwtToken');
   localStorage.removeItem('role');
+  localStorage.removeItem('username');
   router.push('/');
 };
 
@@ -67,5 +71,27 @@ const hideNavigation = computed(
 .navigation a.router-link-active,
 .navigation a:hover {
   opacity: 1;
+}
+.username {
+  margin-left: auto;
+  font-weight: bold;
+  opacity: 1;
+  background: #035e36;
+  border-radius: 20px;
+  padding: 6px 18px 6px 10px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-size: 1.25rem;
+  text-transform: capitalize;
+}
+.username::before {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ee08e 40%, #027d4a 100%);
 }
 </style>
